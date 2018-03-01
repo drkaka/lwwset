@@ -56,19 +56,17 @@ func (s *Set) Merge(t *Set) {
 	t.l.RLock()
 	defer t.l.RUnlock()
 
+	s.l.Lock()
+	defer s.l.Unlock()
+
 	// merging the addSet of t to s with keeping the latest timestamp
 	for element, ts := range t.addSet {
-
 		// get the element and its ts in addSet of s
-		s.l.RLock()
 		tsInS, inS := s.addSet[element]
-		s.l.RUnlock()
 
 		if !inS || (inS && tsInS < ts) {
 			// if not in s or in s but the ts is earlier, add the element to addSet of s
-			s.l.Lock()
 			s.addSet[element] = ts
-			s.l.Unlock()
 		}
 	}
 
@@ -76,15 +74,11 @@ func (s *Set) Merge(t *Set) {
 	for element, ts := range t.removeSet {
 
 		// get the element and its ts in removeSet of s
-		s.l.RLock()
 		tsInS, inS := s.removeSet[element]
-		s.l.RUnlock()
 
 		if !inS || (inS && tsInS < ts) {
 			// if not in s or in s but the ts is earlier, add the element to removeSet of s
-			s.l.Lock()
 			s.removeSet[element] = ts
-			s.l.Unlock()
 		}
 	}
 }

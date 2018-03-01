@@ -1,5 +1,5 @@
-hash: 782740e7f916c334fdd968f2105d127d70e2592c635a97d823558a10ccd3aa53
-updated: 2018-03-01T17:48:09.955822+08:00
+hash: 94b0b1a9e08dad29a5077985a634935350431fcdf3524bfb8e9db3cf98208049
+updated: 2018-03-01T17:54:43.544597+08:00
 imports: []
 testImports:
 - name: github.com/davecgh/go-spew
@@ -16,3 +16,7 @@ testImports:
   version: 4d4bfba8f1d1027c4fdbe371823030df51419987
   subpackages:
   - assert
+- name: golang.org/x/tools
+  version: 73e16cff9e0d4a802937444bebb562458548241d
+  subpackages:
+  - cover

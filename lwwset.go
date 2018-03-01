@@ -19,21 +19,19 @@ func NewSet() *Set {
 
 // Add an element with its unix timestamp.
 func (s *Set) Add(element interface{}, ts int64) {
-	s.l.Lock()
-	defer s.l.Unlock()
-
 	// add the element to the addSet
+	s.l.Lock()
 	s.addSet[element] = ts
+	s.l.Unlock()
 }
 
 // Lookup an element.
 func (s *Set) Lookup(element interface{}) bool {
-	s.l.RLock()
-	defer s.l.RUnlock()
-
 	// get the element info in both add/remove set
+	s.l.RLock()
 	tsAdd := s.addSet[element]
 	tsRemove := s.removeSet[element]
+	s.l.RUnlock()
 
 	// if the element exists in addSet and the timestamp is greater or equal to the timestamp in removeSet, return true
 	if tsAdd > 0 && tsAdd >= tsRemove {
@@ -48,9 +46,8 @@ func (s *Set) Remove(element interface{}, ts int64) {
 	if s.Lookup(element) {
 		// The element can be looked up, add the element to the removeSet
 		s.l.Lock()
-		defer s.l.Unlock()
-
 		s.removeSet[element] = ts
+		s.l.Unlock()
 	}
 }
 

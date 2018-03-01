@@ -61,7 +61,6 @@ func BenchmarkLWWSetAdd(b *testing.B) {
 	var waitGroup sync.WaitGroup
 
 	num := 0
-
 	// banckmark with multi-thread
 	set := NewSet()
 	for i := 0; i < b.N; i++ {
@@ -75,20 +74,15 @@ func BenchmarkLWWSetAdd(b *testing.B) {
 
 	waitGroup.Wait()
 
-	// timer stop here, no need to measure following code
+	// timer stop here, no need to measure the following code
 	b.StopTimer()
 
 	// check the correctness
 	for i := 0; i < num; i++ {
-		waitGroup.Add(1)
-		go func(i int) {
-			if !set.Lookup(i) {
-				b.Fatal("element not exists:", i)
-			}
-			waitGroup.Done()
-		}(i)
+		if !set.Lookup(i) {
+			b.Fatal("element not exists:", i)
+		}
 	}
-	waitGroup.Wait()
 }
 
 func BenchmarkLWWSetLookup(b *testing.B) {
@@ -96,7 +90,7 @@ func BenchmarkLWWSetLookup(b *testing.B) {
 
 	num := 0
 
-	// To add some data.
+	// Add some data.
 	set := NewSet()
 	for i := 0; i < b.N; i++ {
 		num++
@@ -113,14 +107,93 @@ func BenchmarkLWWSetLookup(b *testing.B) {
 	b.ResetTimer()
 
 	// banckmark with multi-thread
+	correct := true
 	for i := 0; i < num; i++ {
 		waitGroup.Add(1)
 		go func(i int) {
 			if !set.Lookup(i) {
-				b.Fatal("element not exists:", i)
+				correct = false
 			}
 			waitGroup.Done()
 		}(i)
 	}
 	waitGroup.Wait()
+	if !correct {
+		b.Fatal("wrong result")
+	}
+}
+
+func BenchmarkLWWSetRemove(b *testing.B) {
+	var waitGroup sync.WaitGroup
+
+	num := 0
+	// To add some data.
+	set := NewSet()
+	for i := 0; i < b.N; i++ {
+		num++
+		waitGroup.Add(1)
+		go func(i int) {
+			set.Add(i, time.Now().Unix())
+			waitGroup.Done()
+		}(i)
+	}
+	waitGroup.Wait()
+
+	// Just measuring the following remove method
+	b.ResetTimer()
+
+	// banckmark with multi-thread
+	for i := 0; i < num; i++ {
+		waitGroup.Add(1)
+		go func(i int) {
+			set.Remove(i, time.Now().Unix()+2)
+			waitGroup.Done()
+		}(i)
+	}
+	waitGroup.Wait()
+
+	// timer stop here, no need to measure the following code
+	b.StopTimer()
+
+	// check the correctness
+	for i := 0; i < num; i++ {
+		if set.Lookup(i) {
+			b.Fatal("element exists:", i)
+		}
+	}
+}
+
+func BenchmarkLWWSetMerge(b *testing.B) {
+	// Prepare the merging sets
+	sets := make([]*Set, 0)
+	for i := 0; i < b.N; i++ {
+		set := NewSet()
+		set.Add(i, time.Now().Unix())
+		sets = append(sets, set)
+	}
+
+	// Just measuring the following merge method
+	b.ResetTimer()
+
+	var waitGroup sync.WaitGroup
+	set := NewSet()
+	// banckmark with multi-thread
+	for i := 0; i < len(sets); i++ {
+		waitGroup.Add(1)
+		go func(i int) {
+			set.Merge(sets[i])
+			waitGroup.Done()
+		}(i)
+	}
+	waitGroup.Wait()
+
+	// timer stop here, no need to measure the following code
+	b.StopTimer()
+
+	// check the correctness
+	for i := 0; i < len(sets); i++ {
+		if !set.Lookup(i) {
+			b.Fatal("element not exists:", i)
+		}
+	}
 }

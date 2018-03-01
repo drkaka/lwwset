@@ -1,12 +1,14 @@
 package lwwset
 
 import (
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLWWSetMethods(t *testing.T) {
+func TestLWWSetLogic(t *testing.T) {
 	set1 := NewSet()
 
 	// element1 for testing
@@ -52,5 +54,73 @@ func TestLWWSetMethods(t *testing.T) {
 	// remove the element from set2, after merging, element2 should not exist anymore
 	set2.Remove(element2, ts22)
 	set1.Merge(set2)
-	assert.Equal(t, false, set1.Lookup(element2), "Should have element1")
+	assert.Equal(t, false, set1.Lookup(element2), "Should not have element2 any more")
+}
+
+func BenchmarkLWWSetAdd(b *testing.B) {
+	var waitGroup sync.WaitGroup
+
+	num := 0
+
+	// banckmark with multi-thread
+	set := NewSet()
+	for i := 0; i < b.N; i++ {
+		num++
+		waitGroup.Add(1)
+		go func(i int) {
+			set.Add(i, time.Now().Unix())
+			waitGroup.Done()
+		}(i)
+	}
+
+	waitGroup.Wait()
+
+	// timer stop here, no need to measure following code
+	b.StopTimer()
+
+	// check the correctness
+	for i := 0; i < num; i++ {
+		waitGroup.Add(1)
+		go func(i int) {
+			if !set.Lookup(i) {
+				b.Fatal("element not exists:", i)
+			}
+			waitGroup.Done()
+		}(i)
+	}
+	waitGroup.Wait()
+}
+
+func BenchmarkLWWSetLookup(b *testing.B) {
+	var waitGroup sync.WaitGroup
+
+	num := 0
+
+	// To add some data.
+	set := NewSet()
+	for i := 0; i < b.N; i++ {
+		num++
+		waitGroup.Add(1)
+		go func(i int) {
+			set.Add(i, time.Now().Unix())
+			waitGroup.Done()
+		}(i)
+	}
+
+	waitGroup.Wait()
+
+	// Just measuring the following lookup code
+	b.ResetTimer()
+
+	// banckmark with multi-thread
+	for i := 0; i < num; i++ {
+		waitGroup.Add(1)
+		go func(i int) {
+			if !set.Lookup(i) {
+				b.Fatal("element not exists:", i)
+			}
+			waitGroup.Done()
+		}(i)
+	}
+	waitGroup.Wait()
 }

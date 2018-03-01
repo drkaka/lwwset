@@ -57,7 +57,7 @@ func (s *Set) Remove(element interface{}, ts int64) {
 // Merge the set t to set s
 func (s *Set) Merge(t *Set) {
 	t.l.RLock()
-	t.l.RUnlock()
+	defer t.l.RUnlock()
 
 	// merging the addSet of t to s with keeping the latest timestamp
 	for element, ts := range t.addSet {

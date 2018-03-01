@@ -1,5 +1,5 @@
 # lwwset
-LWW-Element-Set CRDT implementation with Go.
+LWW-Element-Set CRDT thread-safe implementation with Go.
 
 ## Install
 To use lwwset, first:

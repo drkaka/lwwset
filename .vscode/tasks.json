@@ -1,0 +1,18 @@
+{
+    "version": "0.1.0",
+    "command": "go",
+    "isShellCommand": true,
+    "showOutput": "always",
+    "options": {
+        "cwd": "${fileDirname}",
+        "env": {
+        }
+    },
+    "tasks": [
+        {
+            "taskName": "run",
+            "args": ["${workspaceRoot}/main.go"],
+            "isBuildCommand": true
+        }
+    ]
+}

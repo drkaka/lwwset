@@ -1,0 +1,30 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "editor.quickSuggestionsDelay": 20,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 160,
+    "editor.scrollBeyondLastLine": false,
+
+    //"git.enabled": false,
+
+    "go.buildOnSave": "workspace",
+    "go.lintOnSave": "workspace",
+    "go.lintTool": "golint",
+    "go.docsTool": "godoc",
+    "go.vetOnSave": "workspace",
+    "go.buildFlags": [],
+    "go.lintFlags": [],
+    "go.vetFlags": [],
+    "go.testFlags": ["-v", "-cover", "-race"],
+    "go.formatTool": "goimports",
+    "go.formatFlags": [],
+    "go.coverOnSave": false,
+    "go.useCodeSnippetsOnFunctionSuggest": true,
+    "go.inferGopath": true,
+    "go.gocodeAutoBuild": true,
+    "go.coverageDecorator":"gutter",
+    "go.enableCodeLens": {
+        "references": false,
+        "runtest": true
+    }
+}

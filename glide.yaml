@@ -1,0 +1,10 @@
+package: github.com/drkaka/lwwset
+import:
+# - package: github.com/urfave/cli
+#   version: ^1.19.1
+# - package: "github.com/boltdb/bolt"
+#   version: "*"
+testImport:
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert

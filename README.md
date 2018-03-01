@@ -1,4 +1,4 @@
-# lwwset
+# lwwset [![Build Status][ci-img]][ci] [![Coverage Status][cov-img]][cov]
 LWW-Element-Set CRDT thread-safe implementation with Go.
 
 ## Install
@@ -38,3 +38,9 @@ Merge another set
 ```Go
 set.Merge(set2)
 ```
+
+
+[ci-img]: https://travis-ci.org/drkaka/lwwset.svg?branch=master
+[ci]: https://travis-ci.org/drkaka/lwwset
+[cov-img]: https://coveralls.io/repos/github/drkaka/lwwset/badge.svg?branch=master
+[cov]: https://coveralls.io/github/drkaka/lwwset?branch=master

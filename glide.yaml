@@ -5,6 +5,7 @@ import:
 # - package: "github.com/boltdb/bolt"
 #   version: "*"
 testImport:
+- package: github.com/mattn/goveralls
 - package: github.com/stretchr/testify
   subpackages:
   - assert
